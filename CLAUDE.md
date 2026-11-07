@@ -1,8 +1,8 @@
 # Signals
 
-Signals looks after a live product. The product sends redacted feedback, exceptions, and a release SHA. Signals groups them by cause. The pilot accepts one, and an issue opens in that product's repo. After the next release, Signals closes the cause if it went quiet and reopens the same issue if it did not.
+Signals looks after a live product. An agent turns feedback, exceptions, and releases into tasks, then checks that the cause went quiet after the release. A person owns the brief and the policy, and reviews a sample. The split with gantry, shinstack, and shinfactory is in `README.md`.
 
-Pilots and product ops use it. The people using the host product do not. One self-hosted instance covers many products.
+One self-hosted instance covers many products. The people using a host product do not open Signals.
 
 ## Commands
 
