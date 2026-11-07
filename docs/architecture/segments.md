@@ -1,188 +1,65 @@
 # Segments
 
-This page names the segments of the outer loop. It does not choose tools or say what to build first.
+An agent runs this loop. A person writes the rules the agent follows, and looks at a sample afterward. The fourteen-step list was a human process. This page replaces it with four agent operations and two files a person owns.
 
-Two existing repos cover the feedback half of this list.
+This page does not choose tools.
 
-- [guangshinhaha/pulse](https://github.com/guangshinhaha/pulse) is private. The PRD is v0.1, dated 18 Jun 2026, owner Tan Guang Shin. Tenant zero is Teacher's Workspace. The P0 build ingests, enriches, clusters, and shows feedback.
-- [shiipeii/pulse](https://github.com/shiipeii/pulse) is public. The PRD is v0.2, dated 24 Sep 2026. It keeps that spine and adds a bug and feature loop: the submitter picks a kind, a model may relabel it, a PM confirms, and a reporter is told when a bug is fixed. Drafting a code fix is specified and not built.
+## What an agent does
 
-Pulse's own names for the early segments are ingest, enrich, cluster, surface, route, and archive. The names below are the ones this repo uses. The Pulse column says what already exists under those older names.
+Four operations. Each one is readable and writable through an API. A screen, if one exists, shows the log of these operations. Work does not wait on the screen.
 
-A new feedback channel in Pulse is a configuration row, not a code change. A second product is a `products` row, not a schema change. Signals registration is that same move, one level up: the tenant is the product, and the channel is one way a fact arrives.
+1. **Take an event.** A feedback note, an exception, a release, or a later kind of fact arrives. The call is safe to retry. The same source id does not create a second event. The stored event carries the product id, the source id, the release, and the working text. The working text has no name, email, or IP. Labels (kind, severity, area) are fields on the event, written by the agent that took it.
 
-## Segment list
+2. **Attach it to a cause.** The agent puts the event on an existing cause or opens a cause. The submitter does not choose the group. A cause has a stable id, a count, and the releases it was seen on.
 
-### 1. Register
+3. **Open a task.** When the policy says the cause is worth work, the agent opens one task in the product's tracker and keeps the link on the cause. The task states the user outcome, the count, the window, the source ids, how to see the failure, how confirm will decide it is fixed, and what is out of scope. It does not prescribe a patch. A second event on the same cause updates that task. It does not open another one.
 
-A live product becomes a tenant.
+4. **Confirm after a release.** A release event names the SHA now serving. The agent re-reads each open cause against that SHA. Quiet closes the cause and the task. Still firing reopens the same task.
 
-In: the product name, where its tasks go, and who may accept work.
+Changing the product (the code, the merge, the deploy) is not one of these operations. shinfactory decides when an open task runs and which agent runs it. gantry runs the machine checks. shinstack tells that agent how to work. Signals stops at the task and the confirm.
 
-Out: a product id.
+## What a person owns
 
-Pulse: a `products` row. Teacher's Workspace is the first tenant.
+Two files, read by the agent on every operation. Plus a sample, after the fact.
 
-### 2. Capture
+**Brief.** What the product is, and the jobs that are actually on. The agent does not file a task for a job the brief says is off. The agent does not change the brief.
 
-A fact arrives from a channel.
+**Policy.** When to open a task, when to wait, and when to stop and ask. The starting policy is:
 
-In: whatever that channel emits.
+- Open a task when a cause is seen again, or when the cause is data loss, an auth failure, or a fully broken main path.
+- Wait on a single sighting that is none of those.
+- Never put a name, an email, or an IP in the task.
+- Never change the brief.
+- Ask a person before sending a message to a named reporter, and before deleting a person's data.
 
-Out: a raw payload and a source id.
+A person reviews a sample of tasks the agent opened and of changes that merged. A person can void a cause. A person is not in the path of each event.
 
-Pulse captures feedback through a hosted form, a webhook (Tally, Typeform, or Jotform), a FormSG decoder, and email forwarded through a Cloudflare worker. CSV import and chat capture are written down and not built.
+## Where the old steps went
 
-Pulse does not capture exceptions, release identifiers, usage counts, or performance scores.
+| Old step | Now |
+|---|---|
+| Register | A product id on every event. One record, not a stage. |
+| Capture, normalize | Take an event. |
+| Hold identity apart | A rule of take-an-event. The original stays in the host product. |
+| Enrich | Fields on the event. |
+| Group | Attach to a cause. |
+| Scope | The brief. The agent reads it. |
+| Surface | A log an agent can query. |
+| Judge | The policy. |
+| Route | Open a task. |
+| Change the product | Outside Signals. |
+| Confirm | Confirm after a release. |
+| Reply | The agent may draft it. The policy says to ask before it is sent. |
+| Archive | The events, the causes, and the decisions. Retention is a property of those records. |
 
-### 3. Normalize
+## Pulse
 
-Every source becomes one record. A repeat of the same source id is ignored.
+[guangshinhaha/pulse](https://github.com/guangshinhaha/pulse) (private, PRD v0.1, 18 Jun 2026) and [shiipeii/pulse](https://github.com/shiipeii/pulse) (public, PRD v0.2, 24 Sep 2026) are the feedback path for the first two operations. A channel is a config row. A product is a `products` row. Intake is idempotent on `source_msg_id`. A model then labels the row and attaches it to a theme.
 
-In: the raw payload and the channel configuration.
+Pulse keeps the raw text. This page keeps the original in the host product and passes working text onward. Pulse v0.2 puts a PM on each label before it counts. This page puts that judgment in the policy. Pulse names a Jira draft, and later a draft pull request, as the way out. This page names a task and stops.
 
-Out: one stored row, or a refused duplicate.
+Use of the Pulse code is not decided here.
 
-Pulse: `POST /api/ingest/[channelId]` with a token. Decoders are `passthrough`, `formsg`, and `email`. The dedup key is `source_msg_id`.
+## Left out
 
-### 4. Hold identity apart from working text
-
-The original stays available to a person who is allowed to see it. A later step that calls a model receives only the working text.
-
-In: the normalized record.
-
-Out: a stored original, and a working extract.
-
-Pulse stores `raw_text` and `raw_payload`. The v0.2 PRD adds a submitter email and screenshots, and names a PDPA review before those are used. The Signals brief says a model sees a redacted extract, with no name, email, or IP. How those two rules meet is not decided in this page.
-
-### 5. Enrich
-
-One record gets labels.
-
-In: the working text.
-
-Out: labels, and a reason when a label disagrees with the submitter.
-
-Pulse runs this after the row is saved. A failed label retries. The form still accepts submissions when the model is down. v0.1 sets segment, feature area, type, severity, and sentiment. v0.2 adds the submitter's kind, the model's kind, and a flag when they differ. The kinds are bug, feature, and other.
-
-### 6. Group
-
-Many records become one cause. The person who submitted a record does not choose the group.
-
-In: labelled records for one product.
-
-Out: a theme and a count.
-
-Pulse attaches a record to the nearest existing theme, or starts a theme and labels it. v0.2 groups a bug only with bugs, and a feature only with features. Merge and split are specified in a later phase.
-
-Grouping a feedback record with an exception, a usage count, or a performance score is not in Pulse.
-
-### 7. Scope
-
-A product says which of its jobs are actually on. A cause in a job that is off is not treated as live work.
-
-In: a list the product publishes.
-
-Out: a filter that Group and Route can read.
-
-Pulse has no equivalent. The Signals brief asks for this list because a product can contain features that are built and switched off.
-
-### 8. Surface
-
-A person can see the causes, open one, and search the past.
-
-In: themes and records.
-
-Out: a list and a search result.
-
-Pulse has a dashboard, filters, a drill from a theme to its records, highlights, lowlights, and semantic search. Bugs rank by frequency times severity. Features rank by how many people suggested them.
-
-The Signals brief describes a shorter list: today's causes, with accept, drop, and wait.
-
-### 9. Judge
-
-A person accepts, drops, relabels, merges, or splits. The list does not change the product's tracker by itself.
-
-In: a surfaced cause.
-
-Out: a decision, with who made it and when.
-
-Pulse v0.1 recommends a priority and does not edit a backlog on its own. Pulse v0.2 has the PM confirm or change the kind. The PRD sets a target that the PM keeps at least 90 percent of the model's kinds.
-
-The Signals brief has three outcomes: accept, drop, or wait. A single sighting waits, unless the cause is data loss, an auth failure, or a fully broken main path.
-
-### 10. Route
-
-An accepted cause becomes a task in the product's tracker.
-
-In: the decision and the evidence.
-
-Out: a task id.
-
-Pulse specifies a drafted Jira issue as a later requirement. It is not in the P0 build.
-
-The Signals brief specifies a GitHub issue. The body states the user outcome, the count, the time window, the source ids, how to see the failure, how Confirm will decide the cause is fixed, and what is out of scope. The body does not prescribe a patch.
-
-This page does not choose the tracker.
-
-### 11. Change the product
-
-The task becomes a code change and a release.
-
-In: the task.
-
-Out: a release identifier.
-
-Pulse v0.2 Phase D specifies an AI draft pull request on GitHub, or a prepared change for GitLab. A person reviews, merges, and deploys. That phase is not built. The PRD says it waits on IT approval for repository access.
-
-The Signals brief stops at the accepted issue. shinfactory decides when that issue runs and which agent runs it. gantry runs the machine checks. shinstack tells the agent how to work.
-
-### 12. Confirm
-
-After a release, someone or something decides whether the original cause is quiet.
-
-In: the cause and the release id.
-
-Out: the cause is closed, or the same task is open again.
-
-Pulse v0.2 asks an engineer to mark the theme fixed after the production deploy. A new report after that fix reopens the theme. The check is a person's attestation.
-
-The Signals brief reads the same cause again after the release ping. Quiet closes it. Still firing reopens the same issue.
-
-### 13. Reply
-
-The person who reported the cause hears the outcome.
-
-In: the confirm result, and a contact the product still holds.
-
-Out: one message.
-
-Pulse v0.2 emails the reporter when a bug is fixed. A suggestion sends a notice only if it is released. The Signals brief does not include this segment.
-
-### 14. Archive
-
-The record, the decision, and the task stay findable. A person's data can be removed.
-
-In: the outputs of the segments above.
-
-Out: a retained history, and a deletion when one is required.
-
-Pulse keeps a searchable archive. v0.2 plans an audit log and deletion on request. The Signals brief says the audit trail is the list, the decision, and the issue.
-
-## Left out of the list
-
-Deciding to start a product sits outside these segments. The pilot does that in a brainstorm with an AI, before the product has users.
-
-A support desk, with SLAs and a ticket per person, is out. Pulse v0.1 says so. Interviews and usability tests stay on the research track. Pulse says that too.
-
-## Overlap
-
-Pulse is an implementation of the feedback path through Register, Capture, Normalize, Enrich, Group, Surface, and Archive, with Judge and Route specified and Reply specified in v0.2.
-
-Signals, as briefed in issue #1, uses the same Register and Judge shape, adds Scope, adds exception and release to Capture, and defines Confirm as a re-read of the cause after a release. It stops before Change the product.
-
-Two differences are recorded here and not resolved.
-
-Pulse keeps the raw text and plans to keep the submitter email and screenshots. The Signals brief keeps the original in the host product and sends a redacted extract onward.
-
-Pulse names Jira as the task destination. The Signals brief names GitHub. Change the product is specified inside Pulse Phase D and left to shinfactory in the Signals brief.
+Deciding to start a product stays a brainstorm between the pilot and an AI. A support desk, with a ticket per person, stays out.
