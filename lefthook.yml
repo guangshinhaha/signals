@@ -6,6 +6,8 @@ remotes:
     refetch_frequency: 24h
     configs:
       - hooks/base.yml
-      - hooks/node.yml
+      # No package.json yet. Node hooks call npm, which fails closed without one.
+      # Uncomment when the app exists.
+      # - hooks/node.yml
       # - hooks/prisma.yml
       # - hooks/nextjs.yml
