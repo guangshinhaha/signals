@@ -2,7 +2,7 @@
 
 Signals looks after a live product. Reports arrive through inbound adapters. An agent rates each one, and either waits, opens a task, or asks a person. shinfactory changes the product. Signals then checks whether the cause went quiet.
 
-This page is the accepted shape. It does not choose storage, vendors, or libraries. Deeper specs are separate issues.
+This page is the accepted shape. It does not choose storage, vendors, or libraries. The buildable detail is in GitHub issues #2 to #6, not in more pages.
 
 ## Terms
 
@@ -85,15 +85,16 @@ A person reviews a sample of tasks opened and of changes merged, and can void a 
 
 [guangshinhaha/pulse](https://github.com/guangshinhaha/pulse) and [shiipeii/pulse](https://github.com/shiipeii/pulse) already take feedback and attach it to a theme. A channel there is a config row. Whether Signals uses that code is not decided. Pulse keeps the raw text. This page keeps the original in the host product.
 
-## Specs still to write
+## Issues
 
-The shape above is accepted. These issues turn each part into a spec with fixtures:
+The shape above is the map. The fixtures and the done checks are the issues:
 
-- [#2](https://github.com/guangshinhaha/signals/issues/2) the event an inbound adapter must emit
-- [#3](https://github.com/guangshinhaha/signals/issues/3) the bug bar, severe classes, and when a task closes
-- [#4](https://github.com/guangshinhaha/signals/issues/4) the request path before a task exists
-- [#5](https://github.com/guangshinhaha/signals/issues/5) how risk tier and repo mode gate a task
-- [#6](https://github.com/guangshinhaha/signals/issues/6) the outbound adapters
+- [#1](https://github.com/guangshinhaha/signals/issues/1) parent
+- [#2](https://github.com/guangshinhaha/signals/issues/2) the event
+- [#3](https://github.com/guangshinhaha/signals/issues/3) the bug bar
+- [#4](https://github.com/guangshinhaha/signals/issues/4) the request path
+- [#5](https://github.com/guangshinhaha/signals/issues/5) the gate
+- [#6](https://github.com/guangshinhaha/signals/issues/6) outbound adapters
 
 ## Left out
 
