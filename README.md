@@ -28,9 +28,11 @@ gantry, shinstack, and shinfactory state this same split in their READMEs. The r
 
 ## What the agent does
 
-Four operations. The detail is in [docs/architecture/segments.md](docs/architecture/segments.md).
+A report is a bug or a request. Bugs open a task on the second sighting, or immediately for a severe class. Requests are restated and fact-checked before a task exists. High changes, and every request in a supervised repo, ask a person first. The detail is in [docs/architecture/segments.md](docs/architecture/segments.md).
 
-1. **Take an event.** Feedback, an exception, or a release. The same source id lands once. The working text has no name, email, or IP. The original stays in the host product.
+Under that, four operations:
+
+1. **Take an event.** An inbound adapter turns one payload into one event. The same source id lands once. The working text has no name, email, or IP. The original stays in the host product.
 2. **Attach it to a cause.** The agent groups events. The person who reported one does not.
 3. **Open a task** when the policy says the cause is worth work. A later event on that cause updates the same task.
 4. **Confirm after a release.** Quiet closes the cause and the task. Still firing reopens the same task.
