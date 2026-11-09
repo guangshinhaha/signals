@@ -85,6 +85,16 @@ A person reviews a sample of tasks opened and of changes merged, and can void a 
 
 [guangshinhaha/pulse](https://github.com/guangshinhaha/pulse) and [shiipeii/pulse](https://github.com/shiipeii/pulse) already take feedback and attach it to a theme. A channel there is a config row. Whether Signals uses that code is not decided. Pulse keeps the raw text. This page keeps the original in the host product.
 
+## Specs still to write
+
+The shape above is accepted. These issues turn each part into a spec with fixtures:
+
+- [#2](https://github.com/guangshinhaha/signals/issues/2) the event an inbound adapter must emit
+- [#3](https://github.com/guangshinhaha/signals/issues/3) the bug bar, severe classes, and when a task closes
+- [#4](https://github.com/guangshinhaha/signals/issues/4) the request path before a task exists
+- [#5](https://github.com/guangshinhaha/signals/issues/5) how risk tier and repo mode gate a task
+- [#6](https://github.com/guangshinhaha/signals/issues/6) the outbound adapters
+
 ## Left out
 
 Deciding to start a product stays a brainstorm, before anyone is using it. A support desk, with a ticket per person, stays out. Storage, vendors, and libraries stay out of this page.
