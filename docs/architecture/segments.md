@@ -57,16 +57,22 @@ The repo's `shinstack-mode` then decides the handoff.
 |---|---|
 | `auto`, and the change is Low | Open the task. shinfactory builds it. Merge follows the shipping gate. |
 | `auto`, and the change is Moderate | Same, with the review depth that table already sets. |
-| High, in any mode | Ask before a task is opened. A verifier is not a substitute for that ask. |
-| `supervised`, and the change is a request | Ask before the task is opened. |
+| High, in any mode | Open the task labelled `needs-shin`, and ask in the Signals chat. A verifier is not a substitute for that ask. |
+| `supervised`, and the change is a request | Open the task labelled `needs-shin`, and ask in the Signals chat. |
 
 Moderate requests in an `auto` repo do not ask first. That ask would put a person back on ordinary work.
+
+## Chat and the issue
+
+GitHub is the record. The factory reads it. The pilot does not work from the issue list.
+
+Signals talks in one chat. It says when a task is waiting, and it says what it opened. A yes, a no, or a void is a reply in that chat. Signals then changes the issue. `ready` means the factory may build it. `needs-shin` means the factory must leave it. The pilot does not have to set the label.
 
 ## Adapters
 
 Inbound decoders named so far: the product's own form, FormSG, a Slack workflow, a note (a boss comment, a mail, or a paste), an exception source, and a release ping. The release ping is what makes confirm possible. Adding one is config plus a decoder. Pulse already uses this shape for form, webhook, FormSG, and email.
 
-Outbound adapters the agent needs: read the brief and the repo, read open tasks so it does not file a duplicate, search outside for an existing product, and write the task. Posting back to the channel that reported it is also outbound. Ask before a message goes to a named person, and before deleting a person's data.
+Outbound adapters the agent needs: read the brief and the repo, read open tasks so it does not file a duplicate, search outside for an existing product, write the task, and talk in the Signals chat. Posting back to the channel that reported it is also outbound. Ask in the Signals chat before a message goes to a named person, and before deleting a person's data.
 
 ## Plumbing under the kinds
 
@@ -79,7 +85,7 @@ Four operations. Each one is readable and writable through an API. A screen, if 
 
 shinfactory decides when an open task runs and which agent runs it. gantry runs the machine checks. shinstack tells that agent how to work, and its mode decides whether a merge may happen. Signals stops at the task and the confirm.
 
-A person reviews a sample of tasks opened and of changes merged, and can void a cause. A person is not on the path of each event.
+A person reviews a sample in that same chat, and can void a cause from there. A person is not on the path of each event.
 
 ## Pulse
 
