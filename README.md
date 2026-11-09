@@ -24,7 +24,7 @@ To place a new rule, ask these in order and stop at the first yes:
 
 Signals opens the task and stops. shinfactory decides when that task runs and which agent runs it. gantry decides whether the checks pass. shinstack tells the agent how to work, and its `approval-modes` decides whether a merge may happen. A merge still needs both a green check and an approval.
 
-The other three repos state the same split among themselves in their READMEs. They do not list signals yet. The reasoning for those three is in [shinstack-vs-shinfactory](https://github.com/guangshinhaha/shinstack/blob/main/docs/decisions/shinstack-vs-shinfactory.md).
+gantry, shinstack, and shinfactory state this same split in their READMEs. The reasoning for those three is in [shinstack-vs-shinfactory](https://github.com/guangshinhaha/shinstack/blob/main/docs/decisions/shinstack-vs-shinfactory.md).
 
 ## What the agent does
 
