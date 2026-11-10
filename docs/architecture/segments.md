@@ -68,6 +68,24 @@ Inbound decoders named so far: the product's own form, FormSG, a Slack workflow,
 
 Outbound adapters the agent needs: read the brief and the repo, read open tasks so it does not file a duplicate, search outside for an existing product, and write the task. Posting back to the channel that reported it is also outbound. Ask before a message goes to a named person, and before deleting a person's data.
 
+### Candidate: an agent connector as both adapters
+
+Not decided. On 2026-11-10 an agent session reached Slack through the pilot's claude.ai Slack connector, an MCP server that the agent already has. It found a user, pulled their recent messages across channels and DMs, and could post, draft, schedule, and react. No webhook, Slack app, or decoder code was written.
+
+That one connector could cover both directions for a source:
+
+- **Inbound, by pull.** The agent searches with `in:<channel> after:<last seen>` and turns each message into an event. Channel id plus message `ts` is the source id, so a second pull lands nothing new.
+- **Outbound.** Posting back to the reporting thread uses the same connector.
+
+If this holds, a new source is a connector the agent already has, plus a row in the brief that names the channels. It needs no new decoder. Gmail, Google Drive, Notion, and Granola connectors have the same shape.
+
+Open questions before this is accepted:
+
+- **Scope.** The connector acts as the pilot's own account, so it can read their DMs. The brief must list the channels, and the adapter reads nothing else.
+- **Working text.** Slack results carry names and emails. The adapter strips them before the agent rates anything, as with every other source.
+- **Liveness.** A pull runs only while an agent session runs. A severe class could wait until the next pull. A push source, such as a Slack workflow or an exception webhook, does not wait.
+- **Host.** The connector exists only in claude.ai and Claude Code sessions that are signed in to that account. A self-hosted instance with no such session cannot use it.
+
 ## Plumbing under the kinds
 
 Four operations. Each one is readable and writable through an API. A screen, if one exists, is a log. Work does not wait on it.
